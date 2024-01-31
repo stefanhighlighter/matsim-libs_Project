@@ -11,23 +11,23 @@
 		<plan selected="yes">
 			<activity type="h" x="4456712.5" y="5404189.0" end_time="05:28:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="a" x="4458068.86626199" y="5403697.62595843" end_time="06:45:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="a" x="4458357.44594906" y="5403447.75927903" end_time="07:08:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4456712.5" y="5404189.0" end_time="07:57:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="a" x="4457338.03622557" y="5403172.18341814" end_time="08:14:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 		</plan>
 
@@ -39,87 +39,87 @@
 		<plan selected="yes">
 			<activity type="h" x="4456712.5" y="5404189.0" end_time="14:30:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4456712.5" y="5404189.0" end_time="14:30:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="a" x="4463037.19836652" y="5376892.0412393" end_time="15:08:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="o" x="4462319.37776438" y="5377249.68940324" end_time="17:16:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4456712.5" y="5404189.0" end_time="12:40:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4454912.5533134" y="5404330.45043484" end_time="14:41:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="a" x="4457949.10066321" y="5402648.09047883" end_time="15:01:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4456712.5" y="5404189.0" end_time="18:03:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4456712.5" y="5404189.0" end_time="18:03:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4467753.43244012" y="5402287.59206533" end_time="20:18:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4464428.02626619" y="5404131.10362135" end_time="22:52:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4456712.5" y="5404189.0" end_time="10:34:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="o" x="4460418.97632696" y="5401683.59446969" end_time="11:40:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4456712.5" y="5404189.0" end_time="16:03:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4457185.74573091" y="5401944.16010182" end_time="17:08:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="o" x="4453881.7253532" y="5405038.30757299" end_time="17:40:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="a" x="4457962.14093897" y="5402796.2955239" end_time="18:01:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4456712.5" y="5404189.0" end_time="08:46:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4449320.0737477" y="5404039.84392989" end_time="09:08:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4456173.46510147" y="5404286.231684" end_time="10:29:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="o" x="4456657.19226794" y="5404959.5624521" end_time="11:41:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 		</plan>
 
@@ -287,87 +287,87 @@
 		<plan selected="yes">
 			<activity type="h" x="4460026.0" y="5403523.5" end_time="19:32:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4454960.9375263" y="5405631.65341303" end_time="21:39:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4460026.0" y="5403523.5" end_time="12:37:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="w" x="4458778.3019073" y="5403378.80359877" end_time="13:53:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4460026.0" y="5403523.5" end_time="17:47:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4460026.0" y="5403523.5" end_time="17:47:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4454761.5519912" y="5403453.73023627" end_time="18:39:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4460026.0" y="5403523.5" end_time="14:42:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4460026.0" y="5403523.5" end_time="14:42:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="s" x="4458252.63451234" y="5402341.849345" end_time="15:10:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4460026.0" y="5403523.5" end_time="12:32:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="w" x="4454597.49855175" y="5403784.6523963" end_time="13:53:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4460026.0" y="5403523.5" end_time="17:00:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4460026.0" y="5403523.5" end_time="17:00:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4459548.51662743" y="5399855.15417112" end_time="17:35:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4460026.0" y="5403523.5" end_time="16:15:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4456327.0483269" y="5407245.80713746" end_time="18:36:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4457187.00743402" y="5400367.58752098" end_time="19:15:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="h" x="4460026.0" y="5403523.5" end_time="08:17:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="r" x="4462354.35883005" y="5403892.98561539" end_time="09:21:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 			<activity type="s" x="4456144.23956583" y="5402229.90117168" end_time="10:07:00" >
 			</activity>
-			<leg mode="car">
+			<leg mode="ELECTRIC_CAR">
 			</leg>
 		</plan>
 

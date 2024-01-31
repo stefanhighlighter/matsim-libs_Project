@@ -119,8 +119,8 @@ public class ChargingStationMatcher {
                 String id = chargerElement.getAttribute("id");
                 double x = Double.parseDouble(chargerElement.getAttribute("x").replace(',', '.'));
                 double y = Double.parseDouble(chargerElement.getAttribute("y").replace(',', '.'));
-				double plugPower = Double.parseDouble(chargerElement.getAttribute("plug_power").replace('.', '.'));
-				double plugCount = Double.parseDouble(chargerElement.getAttribute("plug_count").replace('.', '.'));
+				double plugPower = Double.parseDouble(chargerElement.getAttribute("plug_power"));
+				int plugCount = (int) Double.parseDouble(chargerElement.getAttribute("plug_count"));
 
                 ChargingStation chargingStation = new ChargingStation(id, x, y, plugPower, plugCount);
                 chargingStations.add(chargingStation);
@@ -224,10 +224,10 @@ class ChargingStation {
     private double x;
     private double y;
 	private double plugPower;
-	private double plugCount;
+	private int plugCount;
     private Link matchedLink;
 
-    public ChargingStation(String id, double x, double y, double plugPower, double plugCount) {
+    public ChargingStation(String id, double x, double y, double plugPower, int plugCount) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -248,7 +248,7 @@ class ChargingStation {
     }
 
 	public double getPlugPower() {return plugPower;}
-	public double getPlugCount() {return plugCount;}
+	public int getPlugCount() {return plugCount;}
 
     public void setMatchedLink(Link matchedLink) {
         this.matchedLink = matchedLink;
