@@ -1,4 +1,4 @@
-package Project09;
+package Project09.Generation;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -13,12 +13,14 @@ import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.population.io.PopulationWriter;
 import org.matsim.core.scenario.ScenarioUtils;
 
+import java.io.Reader;
+import java.util.stream.Collectors;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class PlanWriter {
+
+public class PlansGenerator {
 	public static void main(String[] args) {
 		Config config = ConfigUtils.createConfig();
 		Scenario scenario = ScenarioUtils.createScenario(config);
@@ -53,16 +55,20 @@ public class PlanWriter {
 				.collect(Collectors.toList());
 
 			if (!personLegs.isEmpty()) {
-				String activityType = getActivityTypeAbbreviation(activityRecord.get("purpose"));
+				String activityType = activityRecord.get("purpose");
 				Coord coord = new Coord(Double.parseDouble(activityRecord.get("x")), Double.parseDouble(activityRecord.get("y")));
 				Activity activity = existingPopulation.getFactory().createActivityFromCoord(activityType, coord);
-				activity.setEndTime((Double.parseDouble(activityRecord.get("end_time_min")) % 1440) * 60);
+				activity.setStartTime((Double.parseDouble(activityRecord.get("start_time_min"))%1440)*60);
+				activity.setEndTime((Double.parseDouble(activityRecord.get("end_time_min"))%1440)*60);
 				plan.addActivity(activity);
 
+				// Add corresponding legs for the activity
 				for (CSVRecord legRecord : personLegs) {
 					if (Double.parseDouble(legRecord.get("start_time_min")) == Double.parseDouble(activityRecord.get("end_time_min")) &&
 						legRecord.get("mode").equals("CAR_DRIVER")) {
 						Leg leg = existingPopulation.getFactory().createLeg(TransportMode.car);
+						leg.setDepartureTime((Double.parseDouble(legRecord.get("start_time_min"))%1440)*60);
+						leg.setTravelTime((Double.parseDouble(legRecord.get("time_min"))%1440)*60);
 						leg.setMode("car");
 						plan.addLeg(leg);
 					}
@@ -70,11 +76,14 @@ public class PlanWriter {
 			}
 		}
 
+
+		// Write the population to XML
 		PopulationWriter writer = new PopulationWriter(existingPopulation, null);
-		writer.write("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/plans_Project.xml");
+		writer.write("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/sonstiges/plans_Old.xml");
 
 		System.out.println("Plan file generated successfully.");
 	}
+
 
 	private static List<CSVRecord> readCSV(String filePath) {
 		try (CSVParser parser = new CSVParser(new FileReader(filePath), CSVFormat.DEFAULT.withHeader())) {
@@ -84,17 +93,11 @@ public class PlanWriter {
 			throw new RuntimeException("Error reading CSV file: " + filePath);
 		}
 	}
-
-	private static String getActivityTypeAbbreviation(String activityType) {
-		Map<String, String> abbreviationMap = new HashMap<>();
-		abbreviationMap.put("HOME", "h");
-		abbreviationMap.put("WORK", "w");
-		abbreviationMap.put("ACCOMPANY", "a");
-		abbreviationMap.put("EDUCATION", "e");
-		abbreviationMap.put("RECREATION", "r");
-		abbreviationMap.put("SHOPPING", "s");
-		abbreviationMap.put("OTHER", "o");
-
-		return abbreviationMap.getOrDefault(activityType, activityType);
-	}
+    /*private static List<CSVRecord> readCSVInChunks(String filePath) {
+        try (Reader reader = new FileReader(filePath); CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(reader)) {
+            return parser.getRecords().stream().collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error reading CSV file: " + filePath);
+        }*/
 }

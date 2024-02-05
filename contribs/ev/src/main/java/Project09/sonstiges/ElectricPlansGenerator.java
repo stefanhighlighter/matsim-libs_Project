@@ -28,7 +28,7 @@ public class ElectricPlansGenerator {
                 if (selectedPlan != null) {
                     for (PlanElement planElement : selectedPlan.getPlanElements()) {
                         if (planElement instanceof Leg && "car".equals(((Leg) planElement).getMode())) {
-                            ((Leg) planElement).setMode("ELECTRIC_CAR");
+                            ((Leg) planElement).setMode("car");
                         }
                     }
                 }
