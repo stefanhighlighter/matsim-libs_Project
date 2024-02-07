@@ -1,4 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?><matched_chargers>
+<!DOCTYPE chargers SYSTEM "http://matsim.org/files/dtd/chargers_v1.dtd">
+<chargers>
   <charger id="charger56" link="48114465_0" plug_power="44.0" plug_count="2"/>
   <charger id="charger58" link="313864263_0" plug_power="77.0" plug_count="2"/>
   <charger id="charger59" link="48114465_0" plug_power="44.0" plug_count="2"/>
@@ -3484,4 +3485,4 @@
   <charger id="charger10898" link="12477450_3" plug_power="40.0" plug_count="2"/>
   <charger id="charger10901" link="699539118_0" plug_power="22.0" plug_count="2"/>
   <charger id="charger10904" link="69578360_0" plug_power="14.0" plug_count="1"/>
-</matched_chargers>
+</chargers>

@@ -25,7 +25,7 @@ public class PlanWriterEV {
 		Population population = scenario.getPopulation();
 
 		PopulationReader populationReader = new PopulationReader(scenario);
-		populationReader.readFile("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/population_Project.xml");
+		populationReader.readFile("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/Population_Project.xml");
 
 		Scenario modifiedScenario = ScenarioUtils.createScenario(config);
 		Population modifiedPopulation = modifiedScenario.getPopulation();

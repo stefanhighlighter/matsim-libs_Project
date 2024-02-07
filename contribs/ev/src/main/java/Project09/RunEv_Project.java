@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class RunEv_Project {
-	static final String DEFAULT_CONFIG_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/config_New.xml";
+	static final String DEFAULT_CONFIG_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/config_Project.xml";
 	private static final Logger log = LogManager.getLogger(RunEv_Project.class);
 
 	public static void main(String[] args) throws IOException {
@@ -29,7 +29,7 @@ public class RunEv_Project {
 		} else {
 			File localConfigFile = new File(DEFAULT_CONFIG_FILE);
 			if (localConfigFile.exists()) {
-				log.info("Starting simulation run with the local example config file");
+				log.info("Starting simulation run with the local config file");
 				args = new String[] {DEFAULT_CONFIG_FILE};
 			} else {
 				log.info("Starting simulation run with the example config file from GitHub repository");

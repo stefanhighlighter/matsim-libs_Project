@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE population SYSTEM "http://www.matsim.org/files/dtd/population_v6.dtd">
+
+<population>
+
+
+<!-- ====================================================================== -->
+
+	<person id="100002">
+		<plan selected="yes">
+			<activity type="HOME" x="4456850.5" y="5399122.0" end_time="63:22:00" >
+			</activity>
+			<leg mode="car">
+			</leg>
+			<activity type="RECREATION" x="4461548.60873541" y="5401724.04792133" end_time="65:29:00" >
+			</activity>
+			<leg mode="car">
+			</leg>
+			<activity type="HOME" x="4456850.5" y="5399122.0" end_time="70:22:00" >
+			</activity>
+
+		</plan>
+
+	</person>
+
+<!-- ====================================================================== -->
+
+	<person id="1000024">
+		<plan selected="yes">
+			<activity type="HOME" x="4462137.0" y="5332317.0" end_time="64:56:00" >
+			</activity>
+			<leg mode="car">
+			</leg>
+			<activity type="OTHER" x="4464705.46438477" y="5328429.95306797" end_time="65:18:00" >
+			</activity>
+			<leg mode="car">
+			</leg>
+			<activity type="HOME" x="4462137.0" y="5332317.0" end_time="70:56:00" >
+			</activity>
+		</plan>
+
+	</person>
+
+<!-- ====================================================================== -->
+
+
+</population>
