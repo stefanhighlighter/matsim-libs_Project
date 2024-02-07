@@ -1,8 +1,5 @@
 package Project09.Generation;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
@@ -13,62 +10,68 @@ import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.population.io.PopulationWriter;
 import org.matsim.core.scenario.ScenarioUtils;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlanWriter {
+	private static final String LEGS_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/sonstiges/legs_sample.csv";
+	private static final String OUTPUT_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/population_Project.xml";
+
 	public static void main(String[] args) {
 		Config config = ConfigUtils.createConfig();
 		Scenario scenario = ScenarioUtils.createScenario(config);
 
 		Population existingPopulation = scenario.getPopulation();
-
 		Map<String, Person> personMap = new HashMap<>();
-		List<CSVRecord> legs = readCSV("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/sonstiges/legs_sample.csv");
 
-		for (CSVRecord legRecord : legs) {
-			String personIdStr = legRecord.get("person_id");
-			Id<Person> personId = Id.createPersonId(personIdStr);
+		try (BufferedReader reader = new BufferedReader(new FileReader(LEGS_FILE))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] values = line.split(",");
+				String personIdStr = values[0];
+				String mode = values[11];
 
-			Person person = personMap.computeIfAbsent(personIdStr, id -> {
-				Person newPerson = existingPopulation.getFactory().createPerson(personId);
-				existingPopulation.addPerson(newPerson);
-				return newPerson;
-			});
+				if (!mode.equals("\"CAR_DRIVER\"")) {
+					continue;
+					//"\"CAR_DRIVER\""
+				}
 
-			Plan plan = person.getSelectedPlan();
-			if (plan == null) {
-				plan = existingPopulation.getFactory().createPlan();
-				person.addPlan(plan);
-			}
+				Id<Person> personId = Id.createPersonId(personIdStr);
+				Person person = personMap.computeIfAbsent(personIdStr, id -> {
+					Person newPerson = existingPopulation.getFactory().createPerson(personId);
+					existingPopulation.addPerson(newPerson);
+					return newPerson;
+				});
 
-			if (legRecord.get("mode").equals("CAR_DRIVER")) {
-				String legType = legRecord.get("previous_purpose");
-				Coord coord = new Coord(Double.parseDouble(legRecord.get("start_x")), Double.parseDouble(legRecord.get("start_y")));
+				Plan plan = person.getSelectedPlan();
+				if (plan == null) {
+					plan = existingPopulation.getFactory().createPlan();
+					person.addPlan(plan);
+				}
 
-				Activity activity = existingPopulation.getFactory().createActivityFromCoord(legType, coord);
-				activity.setEndTime((Double.parseDouble(legRecord.get("start_time_min")) % 1440) * 60);
+				String previousPurpose = values[1];
+				double startX = Double.parseDouble(values[3]);
+				double startY = Double.parseDouble(values[4]);
+				Coord coord = new Coord(startX, startY);
+
+				Activity activity = existingPopulation.getFactory().createActivityFromCoord(previousPurpose, coord);
+				activity.setEndTime((Double.parseDouble(values[2]) % 1440) * 60);
 				plan.addActivity(activity);
 
 				Leg leg = existingPopulation.getFactory().createLeg(TransportMode.car);
 				leg.setMode("car");
 				plan.addLeg(leg);
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error reading CSV file: " + LEGS_FILE);
 		}
 
 		PopulationWriter writer = new PopulationWriter(existingPopulation, null);
-		writer.write("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/population_Project.xml");
-
+		writer.write(OUTPUT_FILE);
 		System.out.println("Plan file generated successfully.");
-	}
-
-	private static List<CSVRecord> readCSV(String filePath) {
-		try (CSVParser parser = new CSVParser(new FileReader(filePath), CSVFormat.DEFAULT.withHeader())) {
-			return parser.getRecords();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Error reading CSV file: " + filePath);
-		}
 	}
 }
