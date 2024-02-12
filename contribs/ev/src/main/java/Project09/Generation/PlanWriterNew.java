@@ -16,9 +16,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlanWriter {
-	private static final String LEGS_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/sonstiges/legs10.csv";
-	private static final String OUTPUT_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/population10.xml";
+public class PlanWriterNew {
+	private static final String LEGS_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/legs10.csv";
+	private static final String OUTPUT_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/population10.xml";
 
 	public static void main(String[] args) {
 		Config config = ConfigUtils.createConfig();
@@ -36,7 +36,6 @@ public class PlanWriter {
 
 				if (!mode.equals("\"CAR_DRIVER\"")) {
 					continue;
-					//"\"CAR_DRIVER\""
 				}
 
 				Id<Person> personId = Id.createPersonId(personIdStr);
@@ -55,15 +54,27 @@ public class PlanWriter {
 				String previousPurpose = values[1].replace("\"", "");
 				double startX = Double.parseDouble(values[3]);
 				double startY = Double.parseDouble(values[4]);
-				Coord coord = new Coord(startX, startY);
+				Coord startCoord = new Coord(startX, startY);
 
-				Activity activity = existingPopulation.getFactory().createActivityFromCoord(previousPurpose, coord);
-				activity.setEndTime((Double.parseDouble(values[2])) * 60);
+				Activity activity = existingPopulation.getFactory().createActivityFromCoord(previousPurpose, startCoord);
+				activity.setEndTime((Double.parseDouble(values[2]) * 60));
 				plan.addActivity(activity);
 
 				Leg leg = existingPopulation.getFactory().createLeg(TransportMode.car);
 				leg.setMode("car");
 				plan.addLeg(leg);
+
+				String nextPurpose = values[6].replace("\"", "");
+				if (nextPurpose.equals("HOME")) {
+					double endX = Double.parseDouble(values[8]);
+					double endY = Double.parseDouble(values[9]);
+					Coord endCoord = new Coord(endX, endY);
+
+					Activity finalActivity = existingPopulation.getFactory().createActivityFromCoord(nextPurpose, endCoord);
+					finalActivity.setEndTime((Double.parseDouble(values[7]) * 60));
+					plan.addActivity(finalActivity);
+
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
