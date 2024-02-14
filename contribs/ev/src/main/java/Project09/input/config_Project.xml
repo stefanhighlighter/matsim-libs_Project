@@ -23,13 +23,13 @@
 	</module>
 
 	<module name="plans">
-		<param name="inputPlansFile" value="/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/population10.xml"/>
+		<param name="inputPlansFile" value="/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/populationMerged.xml"/>
 	</module>
 
 	<module name="controler">
 		<param name="outputDirectory" value="/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/output"/>
 		<param name="firstIteration" value="0"/>
-		<param name="lastIteration" value="0"/>
+		<param name="lastIteration" value="2"/>
 		<param name="eventsFileFormat" value="xml"/>
 		<param name="mobsim" value="qsim"/>
 	</module>
@@ -37,9 +37,7 @@
 	<module name="qsim">
 		<!-- "start/endTime" of MobSim (00:00:00 == take earliest activity time/ run as long as active vehicles exist) -->
 		<param name="startTime" value="00:00:00"/>
-		<param name="endTime" value="24:00:00"/>
-		<param name="simStarttimeInterpretation" value="onlyUseStarttime"/>
-
+		<param name="endTime" value="168:00:00"/>
 	</module>
 
 	<module name="planCalcScore">
@@ -54,6 +52,14 @@
 
 		<parameterset type="activityParams">
 			<param name="activityType" value="HOME"/>
+			<param name="typicalDuration" value="22:00:00"/>
+			<param name="typicalDurationScoreComputation" value="relative"/>
+			<param name="scoringThisActivityAtAll" value="true"/>
+
+		</parameterset>
+
+		<parameterset type="activityParams">
+			<param name="activityType" value="HOME END"/>
 			<param name="typicalDuration" value="22:00:00"/>
 			<param name="typicalDurationScoreComputation" value="relative"/>
 			<param name="scoringThisActivityAtAll" value="true"/>
@@ -119,8 +125,8 @@
 		<parameterset type="activityParams">
 			<param name="activityType" value="car charging interaction"/>
 			<param name="typicalDuration" value="01:30:00"/>
-			<param name="openingTime" value="07:30:00"/>
-			<param name="closingTime" value="21:30:00"/>
+			<param name="openingTime" value="03:30:00"/>
+			<param name="closingTime" value="23:30:00"/>
 			<param name="typicalDurationScoreComputation" value="relative"/>
 			<param name="scoringThisActivityAtAll" value="false"/>
 
@@ -130,7 +136,6 @@
 
 	<module name="strategy">
 		<param name="maxAgentPlanMemorySize" value="5"/> <!-- 0 means unlimited -->
-
 		<param name="ModuleProbability_1" value="0.7"/>
 		<param name="Module_1" value="BestScore"/>
 

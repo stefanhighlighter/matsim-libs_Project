@@ -19,26 +19,30 @@ import org.matsim.core.utils.misc.OptionalTime;
 
 
 public class PlanWriterEV {
+	private static final String POPULATION_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/populationMerged.xml";
+	private static final String OUTPUT_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/evPopulation.xml";
+	private static final double EV_PERCENTAGE = 0.05;
+
 	public static void main(String[] args) {
 		Config config = ConfigUtils.createConfig();
 		Scenario scenario = ScenarioUtils.createScenario(config);
 		Population population = scenario.getPopulation();
 
 		PopulationReader populationReader = new PopulationReader(scenario);
-		populationReader.readFile("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/Population_Project.xml");
+		populationReader.readFile(POPULATION_FILE);
 
 		Scenario modifiedScenario = ScenarioUtils.createScenario(config);
 		Population modifiedPopulation = modifiedScenario.getPopulation();
 		Random random = new Random();
 
 		for (Person person : population.getPersons().values()) {
-			if (random.nextDouble() <= 0.05) {
+			if (random.nextDouble() <= EV_PERCENTAGE) {
 				modifyPerson(person, modifiedPopulation);
 			}
 		}
 
 		PopulationWriter populationWriter = new PopulationWriter(modifiedPopulation, modifiedScenario.getNetwork());
-		populationWriter.write("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/evpopulation_Project.xml");
+		populationWriter.write(OUTPUT_FILE);
 
 		System.out.println("Modified plans file generated successfully.");
 	}
@@ -69,7 +73,6 @@ public class PlanWriterEV {
 					modifiedPlan.addActivity(modifiedActivity);
 				}
 			}
-
 			modifiedPerson.addPlan(modifiedPlan);
 			modifiedPopulation.addPerson(modifiedPerson);
 		}

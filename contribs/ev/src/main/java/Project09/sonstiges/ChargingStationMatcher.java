@@ -27,268 +27,247 @@ import java.util.Map;
 
 public class ChargingStationMatcher {
 
-    private static final double MATCH_RADIUS = 1000.0; // 1km
+	private static final double MATCH_RADIUS = 1000.0; // 500m or 1km
 
-    public static void main(String[] args) {
-        SpatialIndex spatialIndex = buildSpatialIndex();
+	public static void main(String[] args) {
+		SpatialIndex spatialIndex = buildSpatialIndex();
+		List<ChargingStation> chargingStations = loadChargingStations("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/sonstiges/ChargingStations.xml");
+		matchChargingStations(chargingStations, spatialIndex);
+		writeMatchedChargingStationsToXML(chargingStations);
+	}
 
-        List<ChargingStation> chargingStations = loadChargingStations("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/sonstiges/ChargingStations.xml");
+	private static SpatialIndex buildSpatialIndex() {
+		SpatialIndex spatialIndex = new STRtree();
 
-        matchChargingStations(chargingStations, spatialIndex);
+		try (FileReader fileReader = new FileReader("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/network_Project.xml")) {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(new InputSource(fileReader));
 
-        writeMatchedChargingStationsToXML(chargingStations);
-    }
+			NodeList nodeNodes = doc.getElementsByTagName("node");
+			NodeList linkNodes = doc.getElementsByTagName("link");
+			Map<String, Point> nodeCoordinates = new HashMap<>();
 
-    private static SpatialIndex buildSpatialIndex() {
-        SpatialIndex spatialIndex = new STRtree();
+			for (int i = 0; i < nodeNodes.getLength(); i++) {
+				Element nodeElement = (Element) nodeNodes.item(i);
+				String nodeId = nodeElement.getAttribute("id");
+				double x = Double.parseDouble(nodeElement.getAttribute("x"));
+				double y = Double.parseDouble(nodeElement.getAttribute("y"));
 
-        try (FileReader fileReader = new FileReader("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/network_Project.xml")) {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(new InputSource(fileReader));
+				nodeCoordinates.put(nodeId, createPoint(x, y));
+			}
 
-            NodeList nodeNodes = doc.getElementsByTagName("node");
-            NodeList linkNodes = doc.getElementsByTagName("link");
+			for (int i = 0; i < linkNodes.getLength(); i++) {
+				Element linkElement = (Element) linkNodes.item(i);
+				String linkId = linkElement.getAttribute("id");
+				String fromNodeId = linkElement.getAttribute("from");
+				String toNodeId = linkElement.getAttribute("to");
 
-            Map<String, Point> nodeCoordinates = new HashMap<>();
+				Point fromNode = nodeCoordinates.get(fromNodeId);
+				Point toNode = nodeCoordinates.get(toNodeId);
 
-            for (int i = 0; i < nodeNodes.getLength(); i++) {
-                Element nodeElement = (Element) nodeNodes.item(i);
-                String nodeId = nodeElement.getAttribute("id");
-                double x = Double.parseDouble(nodeElement.getAttribute("x"));
-                double y = Double.parseDouble(nodeElement.getAttribute("y"));
+				double x1 = fromNode.getX();
+				double y1 = fromNode.getY();
+				double x2 = toNode.getX();
+				double y2 = toNode.getY();
 
-                nodeCoordinates.put(nodeId, createPoint(x, y));
-            }
+				spatialIndex.insert(new Envelope(x1, x2, y1, y2), new Link(x1, y1, x2, y2, linkId));
+			}
 
-            for (int i = 0; i < linkNodes.getLength(); i++) {
-                Element linkElement = (Element) linkNodes.item(i);
-                String linkId = linkElement.getAttribute("id");
-                String fromNodeId = linkElement.getAttribute("from");
-                String toNodeId = linkElement.getAttribute("to");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-                Point fromNode = nodeCoordinates.get(fromNodeId);
-                Point toNode = nodeCoordinates.get(toNodeId);
+		return spatialIndex;
+	}
 
-                // Calculate link coordinates based on nodes
-                double x1 = fromNode.getX();
-                double y1 = fromNode.getY();
-                double x2 = toNode.getX();
-                double y2 = toNode.getY();
+	private static List<ChargingStation> loadChargingStations(String filePath) {
+		List<ChargingStation> chargingStations = new ArrayList<>();
 
-                spatialIndex.insert(new Envelope(x1, x2, y1, y2), new Link(x1, y1, x2, y2, linkId));
-            }
+		try {
+			File xmlFile = new File(filePath);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(xmlFile);
 
-            //spatialIndex.build();
+			doc.getDocumentElement().normalize();
+			NodeList chargerNodes = doc.getElementsByTagName("charger");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return spatialIndex;
-    }
-
-    private static STRtree buildSpatialIndex(List<Link> roadLinks) {
-        STRtree spatialIndex = new STRtree();
-
-        for (Link roadLink : roadLinks) {
-            Envelope envelope = new Envelope(roadLink.getX1(), roadLink.getX2(), roadLink.getY1(), roadLink.getY2());
-            spatialIndex.insert(envelope, roadLink);
-        }
-
-        spatialIndex.build();
-        return spatialIndex;
-    }
-
-
-    private static List<ChargingStation> loadChargingStations(String filePath) {
-        List<ChargingStation> chargingStations = new ArrayList<>();
-
-        try {
-            File xmlFile = new File(filePath);
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(xmlFile);
-
-            doc.getDocumentElement().normalize();
-
-            NodeList chargerNodes = doc.getElementsByTagName("charger");
-
-            for (int i = 0; i < chargerNodes.getLength(); i++) {
-                Element chargerElement = (Element) chargerNodes.item(i);
-                String id = chargerElement.getAttribute("id");
-                double x = Double.parseDouble(chargerElement.getAttribute("x").replace(',', '.'));
-                double y = Double.parseDouble(chargerElement.getAttribute("y").replace(',', '.'));
+			for (int i = 0; i < chargerNodes.getLength(); i++) {
+				Element chargerElement = (Element) chargerNodes.item(i);
+				String id = chargerElement.getAttribute("id");
+				double x = Double.parseDouble(chargerElement.getAttribute("x").replace(',', '.'));
+				double y = Double.parseDouble(chargerElement.getAttribute("y").replace(',', '.'));
 				double plugPower = Double.parseDouble(chargerElement.getAttribute("plug_power"));
 				int plugCount = (int) Double.parseDouble(chargerElement.getAttribute("plug_count"));
 
-                ChargingStation chargingStation = new ChargingStation(id, x, y, plugPower, plugCount);
-                chargingStations.add(chargingStation);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+				ChargingStation chargingStation = new ChargingStation(id, x, y, plugPower, plugCount);
+				chargingStations.add(chargingStation);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        return chargingStations;
-    }
+		return chargingStations;
+	}
 
-    private static void matchChargingStations(List<ChargingStation> chargingStations, SpatialIndex spatialIndex) {
-        for (ChargingStation chargingStation : chargingStations) {
-            Point stationPoint = createPoint(chargingStation.getX(), chargingStation.getY());
-            Envelope searchEnvelope = new Envelope(stationPoint.getCoordinate());
-            searchEnvelope.expandBy(MATCH_RADIUS);
+	private static void matchChargingStations(List<ChargingStation> chargingStations, SpatialIndex spatialIndex) {
+		for (ChargingStation chargingStation : chargingStations) {
+			Point stationPoint = createPoint(chargingStation.getX(), chargingStation.getY());
+			Envelope searchEnvelope = new Envelope(stationPoint.getCoordinate());
+			searchEnvelope.expandBy(MATCH_RADIUS);
 
-            List<?> candidateLinks = spatialIndex.query(searchEnvelope);
+			List<?> candidateLinks = spatialIndex.query(searchEnvelope);
+			Link nearestLink = findNearestLink(stationPoint, candidateLinks);
+			chargingStation.setMatchedLink(nearestLink);
+		}
+	}
 
-            Link nearestLink = findNearestLink(stationPoint, candidateLinks);
-            chargingStation.setMatchedLink(nearestLink);
-        }
-    }
+	private static Link findNearestLink(Point point, List<?> candidateLinks) {
+		Link nearestLink = null;
+		double minDistance = Double.MAX_VALUE;
 
-    private static Link findNearestLink(Point point, List<?> candidateLinks) {
-        Link nearestLink = null;
-        double minDistance = Double.MAX_VALUE;
+		for (Object candidate : candidateLinks) {
+			if (candidate instanceof Link) {
+				Link candidateLink = (Link) candidate;
+				double distance1 = point.distance(createPoint(candidateLink.getX1(), candidateLink.getY1()));
+				double distance2 = point.distance(createPoint(candidateLink.getX2(), candidateLink.getY2()));
+				double distance = Math.min(distance1, distance2);
 
-        for (Object candidate : candidateLinks) {
-            if (candidate instanceof Link) {
-                Link candidateLink = (Link) candidate;
-                double distance1 = point.distance(createPoint(candidateLink.getX1(), candidateLink.getY1()));
-                double distance2 = point.distance(createPoint(candidateLink.getX2(), candidateLink.getY2()));
+				if (distance < minDistance) {
+					minDistance = distance;
+					nearestLink = candidateLink;
+				}
+			}
+		}
 
-                double distance = Math.min(distance1, distance2);
+		return nearestLink;
+	}
 
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearestLink = candidateLink;
-                }
-            }
-        }
+	private static Point createPoint(double x, double y) {
+		GeometryFactory geometryFactory = new GeometryFactory();
+		Coordinate coordinate = new Coordinate(x, y);
+		return geometryFactory.createPoint(coordinate);
+	}
 
-        return nearestLink;
-    }
+	private static void writeMatchedChargingStationsToXML(List<ChargingStation> chargingStations) {
+		try {
+			XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+			XMLStreamWriter writer = outputFactory.createXMLStreamWriter(new FileWriter("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/chargers_Neu.xml"));
 
-    private static Point createPoint(double x, double y) {
-        GeometryFactory geometryFactory = new GeometryFactory();
-        Coordinate coordinate = new Coordinate(x, y);
-        return geometryFactory.createPoint(coordinate);
-    }
+			writer.writeStartDocument();
+			writer.writeStartElement("matched_chargers");
 
-    private static void writeMatchedChargingStationsToXML(List<ChargingStation> chargingStations) {
-        try {
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            XMLStreamWriter writer = outputFactory.createXMLStreamWriter(new FileWriter("/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/input/chargers_Project.xml"));
+			for (ChargingStation chargingStation : chargingStations) {
+				if (chargingStation.getMatchedLink() != null) {
+					writer.writeCharacters("\n  ");
+					writer.writeStartElement("charger");
+					writer.writeAttribute("id", chargingStation.getId());
 
-            writer.writeStartDocument();
-            writer.writeStartElement("matched_chargers");
-
-            for (ChargingStation chargingStation : chargingStations) {
-                if (chargingStation.getMatchedLink() != null) {
-                    writer.writeCharacters("\n  ");
-                    writer.writeStartElement("charger");
-                    writer.writeAttribute("id", chargingStation.getId());
-
-                    Link matchedLink = chargingStation.getMatchedLink();
-                    if (matchedLink != null) {
+					Link matchedLink = chargingStation.getMatchedLink();
+					if (matchedLink != null) {
 						writer.writeAttribute("link", matchedLink.getLinkId());
 
-                    }
+					}
 
 					writer.writeAttribute("plug_power", String.valueOf(chargingStation.getPlugPower()));
 					writer.writeAttribute("plug_count", String.valueOf(chargingStation.getPlugCount()));
 
-                    writer.writeEndElement();
-                }
-            }
+					writer.writeEndElement();
+				}
+			}
 
-            writer.writeCharacters("\n");
-            writer.writeEndElement();
-            writer.writeEndDocument();
+			writer.writeCharacters("\n");
+			writer.writeEndElement();
+			writer.writeEndDocument();
 
-            writer.close();
+			writer.close();
 
-            System.out.println("Linked charging stations written to XML.");
+			System.out.println("Linked charging stations written to XML.");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static String formatCoordinate(double coordinate) {
-        DecimalFormat df = new DecimalFormat("0.000000");
-        return df.format(coordinate);
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
 
 class ChargingStation {
-    private String id;
-    private double x;
-    private double y;
+	private String id;
+	private double x;
+	private double y;
 	private double plugPower;
 	private int plugCount;
-    private Link matchedLink;
+	private Link matchedLink;
 
-    public ChargingStation(String id, double x, double y, double plugPower, int plugCount) {
-        this.id = id;
-        this.x = x;
-        this.y = y;
+	public ChargingStation(String id, double x, double y, double plugPower, int plugCount) {
+		this.id = id;
+		this.x = x;
+		this.y = y;
 		this.plugPower = plugPower;
 		this.plugCount = plugCount;
-    }
+	}
 
-    public String getId() {
-        return id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public double getX() {
-        return x;
-    }
+	public double getX() {
+		return x;
+	}
 
-    public double getY() {
-        return y;
-    }
+	public double getY() {
+		return y;
+	}
 
-	public double getPlugPower() {return plugPower;}
-	public int getPlugCount() {return plugCount;}
+	public double getPlugPower() {
+		return plugPower;
+	}
 
-    public void setMatchedLink(Link matchedLink) {
-        this.matchedLink = matchedLink;
-    }
+	public int getPlugCount() {
+		return plugCount;
+	}
 
-    public Link getMatchedLink() {
-        return matchedLink;
-    }
+	public void setMatchedLink(Link matchedLink) {
+		this.matchedLink = matchedLink;
+	}
+
+	public Link getMatchedLink() {
+		return matchedLink;
+	}
 }
 
 class Link {
-    private double x1;
-    private double y1;
-    private double x2;
-    private double y2;
-    private String linkId;
+	private double x1;
+	private double y1;
+	private double x2;
+	private double y2;
+	private String linkId;
 
-    public Link(double x1, double y1, double x2, double y2, String linkId) {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.linkId = linkId;
-    }
+	public Link(double x1, double y1, double x2, double y2, String linkId) {
+		this.x1 = x1;
+		this.y1 = y1;
+		this.x2 = x2;
+		this.y2 = y2;
+		this.linkId = linkId;
+	}
 
-    public String getLinkId(){
-        return linkId;
-    }
-    public double getX1() {
-        return x1;
-    }
+	public String getLinkId() {
+		return linkId;
+	}
 
-    public double getY1() {
-        return y1;
-    }
-    public double getX2() {
-        return x2;
-    }
+	public double getX1() {
+		return x1;
+	}
 
-    public double getY2() {
-        return y2;
-    }
+	public double getY1() {
+		return y1;
+	}
+
+	public double getX2() {
+		return x2;
+	}
+
+	public double getY2() {
+		return y2;
+	}
 }
