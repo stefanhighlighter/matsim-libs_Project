@@ -63,17 +63,6 @@ public class PlanWriter {
 				Leg leg = existingPopulation.getFactory().createLeg(TransportMode.car);
 				leg.setMode("car");
 				plan.addLeg(leg);
-
-				String nextPurpose = values[6].replace("\"", "");
-				if (nextPurpose.equals("HOME")) {
-					double endX = Double.parseDouble(values[8]);
-					double endY = Double.parseDouble(values[9]);
-					Coord endCoord = new Coord(endX, endY);
-
-					Activity finalActivity = existingPopulation.getFactory().createActivityFromCoord(nextPurpose, endCoord);
-					finalActivity.setEndTime((Double.parseDouble(values[7]) * 60));
-					plan.addActivity(finalActivity);
-				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

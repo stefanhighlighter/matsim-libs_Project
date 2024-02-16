@@ -20,8 +20,8 @@ import org.matsim.core.utils.misc.OptionalTime;
 
 public class PlanWriterEV {
 	private static final String POPULATION_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/populationMerged.xml";
-	private static final String OUTPUT_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/evPopulation.xml";
-	private static final double EV_PERCENTAGE = 0.05;
+	private static final String OUTPUT_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/evPopulation_5percent.xml";
+	private static final double EV_PERCENTAGE = 0.05; //please generate 5% and 10%
 
 	public static void main(String[] args) {
 		Config config = ConfigUtils.createConfig();

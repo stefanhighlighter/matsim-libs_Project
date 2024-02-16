@@ -1,4 +1,4 @@
-package Project09.Generation;
+package Project09.sonstiges;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -21,14 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-public class PlanMerger {
+public class PlanMergerNew {
 	private static final String INPUT_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/population10.xml";
 	private static final String OUTPUT_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/populationMerged.xml";
 
 	public static void main(String[] args) {
 		try {
-
 			File inputFile = new File(INPUT_FILE);
 			File outputFile = new File(OUTPUT_FILE);
 
@@ -37,6 +35,7 @@ public class PlanMerger {
 			Document document = dBuilder.parse(inputFile);
 
 			Map<String, List<Element>> existingPersonsMap = new HashMap<>();
+
 			Element populationElement = (Element) document.getElementsByTagName("population").item(0);
 
 			NodeList personList = populationElement.getElementsByTagName("person");
@@ -60,8 +59,10 @@ public class PlanMerger {
 					}
 				}
 			}
+
 			updateXML(document, existingPersonsMap);
 			saveToXML(document, outputFile);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -72,38 +73,25 @@ public class PlanMerger {
 			List<Element> plans = entry.getValue();
 			if (plans.size() > 1) {
 				Element mergedPlan = mergeAndSortPlans(doc, plans);
+
 				Element firstPlan = plans.get(0);
+
 				Node personNode = firstPlan.getParentNode();
 				if (personNode != null) {
-					removeHomeEndActivities(personNode);
 					personNode.replaceChild(mergedPlan.cloneNode(true), firstPlan);
-					addHomeEndActivity(doc, (Element) personNode, entry.getKey());
 				}
+
+				// Entferne überschüssige Person-Knoten
 				for (int i = 1; i < plans.size(); i++) {
 					Node redundantPersonNode = plans.get(i).getParentNode();
 					if (redundantPersonNode != null) {
 						redundantPersonNode.getParentNode().removeChild(redundantPersonNode);
 					}
 				}
-			}
-		}
-	}
 
-	private static void removeHomeEndActivities(Node personNode) {
-		NodeList activities = personNode.getChildNodes();
-		List<Node> toRemove = new ArrayList<>();
-
-		for (int i = 0; i < activities.getLength(); i++) {
-			Node activityNode = activities.item(i);
-			if (activityNode.getNodeType() == Node.ELEMENT_NODE) {
-				Element activityElement = (Element) activityNode;
-				if ("HOME END".equals(activityElement.getAttribute("type"))) {
-					toRemove.add(activityNode);
-				}
+				// Füge HOME END nur einmal am Ende des gesamten Plans hinzu
+				addHomeEndActivity(doc, personNode, entry.getKey());
 			}
-		}
-		for (Node node : toRemove) {
-			personNode.removeChild(node);
 		}
 	}
 
@@ -112,19 +100,25 @@ public class PlanMerger {
 		String homeX = coordinates[0];
 		String homeY = coordinates[1];
 
+		// Entferne vorhandene HOME END-Aktivitäten
+		NodeList existingActivities = personNode.getChildNodes();
+		for (int i = existingActivities.getLength() - 1; i >= 0; i--) {
+			Node activityNode = existingActivities.item(i);
+			if (activityNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element activity = (Element) activityNode;
+				if ("activity".equals(activity.getTagName()) && "HOME END".equals(activity.getAttribute("type"))) {
+					personNode.removeChild(activity);
+				}
+			}
+		}
+
+		// Füge HOME END am Ende des gesamten Plans hinzu
 		Element homeEndActivity = document.createElement("activity");
-		homeEndActivity.setAttribute("type", "home end");
+		homeEndActivity.setAttribute("type", "HOME END");
 		homeEndActivity.setAttribute("x", homeX);
 		homeEndActivity.setAttribute("y", homeY);
 
-		NodeList planList = personNode.getChildNodes();
-		for (int i = 0; i < planList.getLength(); i++) {
-			Node node = planList.item(i);
-			if (node.getNodeType() == Node.ELEMENT_NODE && "plan".equals(node.getNodeName())) {
-				node.appendChild(homeEndActivity);
-				break;
-			}
-		}
+		personNode.appendChild(homeEndActivity);
 	}
 
 	private static Element mergeAndSortPlans(Document document, List<Element> plans) {
@@ -140,6 +134,7 @@ public class PlanMerger {
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					Element element = (Element) node.cloneNode(true);
 					if (element.getTagName().equals("leg")) {
+						// Make sure legs have no time attribute
 						element.removeAttribute("end_time");
 						allLegs.add(element);
 					} else {
@@ -174,11 +169,15 @@ public class PlanMerger {
 		boolean homeEndAdded = false;
 		for (int i = 0; i < allActivities.size(); i++) {
 			Element activity = allActivities.get(i);
-			if (activity.getAttribute("type").equals("home end") && !homeEndAdded) {
+			if (activity.getAttribute("type").equals("HOME END") && !homeEndAdded) {
 				homeEndAdded = true;
+				mergedPlan.appendChild(activity.cloneNode(true));
 			} else {
 				mergedPlan.appendChild(activity.cloneNode(true));
-				if (i < allActivities.size() - 1 || !homeEndAdded) {
+
+				// Append leg for all activities except the last "home end"
+				if (i < allActivities.size() - 1) {
+					// Ensure there is a leg available before appending
 					if (!allLegs.isEmpty()) {
 						Element leg = allLegs.remove(0);
 						mergedPlan.appendChild(leg.cloneNode(true));
@@ -186,7 +185,10 @@ public class PlanMerger {
 				}
 			}
 		}
+
+
 		mergedPlan.setAttribute("selected", plans.get(0).getAttribute("selected"));
+
 		return mergedPlan;
 	}
 
@@ -199,6 +201,7 @@ public class PlanMerger {
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
 			transformer.setOutputProperty(OutputKeys.CDATA_SECTION_ELEMENTS, "yes");
 			transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes");
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
