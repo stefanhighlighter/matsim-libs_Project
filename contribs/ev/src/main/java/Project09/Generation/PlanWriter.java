@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlanWriter {
-	private static final String LEGS_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/legs10.csv";
-	private static final String OUTPUT_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/population10.xml";
+	private static final String LEGS_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/legs.csv";
+	private static final String OUTPUT_FILE = "/Users/stefan/IdeaProjects/matsim-libs_Project/contribs/ev/src/main/java/Project09/Generation/population.xml";
 
 	public static void main(String[] args) {
 		Config config = ConfigUtils.createConfig();
